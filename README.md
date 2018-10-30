@@ -4,5 +4,6 @@ This sample project is a ci/cd pipeline from (https://medium.com/bettercode/how-
 
 - [Updating to New Releases](#updating-to-new-releases)
   - Release early and often
+  - Integration with Travis CI
 
 ## Updating to New Releases
