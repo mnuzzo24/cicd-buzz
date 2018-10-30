@@ -3,6 +3,6 @@ This sample project is a ci/cd pipeline from (https://medium.com/bettercode/how-
 ## Table of Contents
 
 - [Updating to New Releases](#updating-to-new-releases)
-  - Test text
+  - Release early and often
 
 ## Updating to New Releases
