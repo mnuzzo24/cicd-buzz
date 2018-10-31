@@ -1,1 +1,1 @@
-web: gunicorn src.buzz:app
+web: gunicorn buzz:app
