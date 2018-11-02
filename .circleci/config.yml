@@ -49,6 +49,28 @@ jobs:
           command: |
             - python -m pytest -v
 
-      - after_success:
-            - sh .circleci/deploy_dockerhub.sh
-            - test "$TRAVIS_BRANCH" = "master" && sh .circleci/deploy_heroku.sh
+    deploy-stage:
+        docker:
+          - image: ubuntu:14.04
+        working_directory: /tmp/my-project
+        steps:
+          - run:
+              name: Deploy if tests pass and branch is Staging
+              command: sh .circleci/deploy_dockerhub.sh
+              #command: ansible-playbook site.yml -i staging
+          - run:
+              name: Deploy if tests pass and branch is Master (Heroku)
+              command: test "$CIRCLE_BRANCH" = "master" && sh .circleci/deploy_heroku.sh
+                            
+      deploy-prod:
+        docker:
+          - image: ubuntu:14.04
+        working_directory: /tmp/my-project
+        steps:
+          - run:
+              name: Deploy if tests pass and branch is Master (DockerHub)
+              command: sh .circleci/deploy_dockerhub.sh
+              #command: ansible-playbook site.yml -i production
+          - run:
+              name: Deploy if tests pass and branch is Master (Heroku)
+              command: test "$CIRCLE_BRANCH" = "master" && sh .circleci/deploy_heroku.sh
