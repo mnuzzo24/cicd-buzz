@@ -5,72 +5,38 @@
 version: 2
 jobs:
   build:
-    docker:
-      # specify the version you desire here
-      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      - image: circleci/python:3.6.1
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
-
     working_directory: ~/cicd-buzz
-
+    docker:
+      - image: circleci/python:3.6.4
+        environment:
+          PIPENV_VENV_IN_PROJECT: true
     steps:
       - checkout
-
-      # Download and cache dependencies
+      - run: sudo chown -R circleci:circleci /usr/local/bin
+      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
       - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "requirements.txt" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
+          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
       - run:
-          name: install dependencies
           command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip3 install -r requirements.txt
-
+            sudo pip3 install pipenv
+            pipenv install
       - save_cache:
+          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
           paths:
-            - ./venv
-          key: v1-dependencies-{{ checksum "requirements.txt" }}
-
-      # run tests!
-      # this example uses Django's built-in test-runner
-      # other common Python testing frameworks include pytest and nose
-      # https://pytest.org
-      # https://nose.readthedocs.io
+            - ".venv"
+            - "/usr/local/bin"
+            - "/usr/local/lib/python3.6/site-packages"
       - run:
-          name: run tests
           command: |
-            - python -m pytest -v
-
-    deploy-stage:
-        docker:
-          - image: circleci/python:3.6.1
-        working_directory: /tmp/my-project
-        steps:
-          - run:
-              name: Deploy if tests pass and branch is Staging
-              command: sh .circleci/deploy_dockerhub.sh
-              #command: ansible-playbook site.yml -i staging
-          - run:
-              name: Deploy if tests pass and branch is Master (Heroku)
-              command: test "$CIRCLE_BRANCH" = "master" && sh .circleci/deploy_heroku.sh
-
-      deploy-prod:
-        docker:
-          - image: circleci/python:3.6.1
-        working_directory: /tmp/my-project
-        steps:
-          - run:
-              name: Deploy if tests pass and branch is Master (DockerHub)
-              command: sh .circleci/deploy_dockerhub.sh
-              #command: ansible-playbook site.yml -i production
-          - run:
-              name: Deploy if tests pass and branch is Master (Heroku)
-              command: test "$CIRCLE_BRANCH" = "master" && sh .circleci/deploy_heroku.sh
+            pipenv run "python -m pytest -v"
+      - run:
+          name: Deploy if tests pass and branch is Staging
+          command: sh .circleci/deploy_dockerhub.sh
+      - run:
+          name: Deploy if tests pass and branch is Master (Heroku)
+          command: test "$CIRCLE_BRANCH" = "master" && sh .circleci/deploy_heroku.sh
+      - store_test_results:
+          path: test-results
+      - store_artifacts:
+          path: test-results
+          destination: tr1
