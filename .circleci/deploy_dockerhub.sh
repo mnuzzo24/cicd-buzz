@@ -5,5 +5,5 @@ if [ "$CIRCLE_BRANCH" = "master" ]; then
 else
     TAG="$CIRCLE_BRANCH"
 fi
-docker build -f Dockerfile -t "$REPO_SLUG":$TAG .
+docker build -f Dockerfile -t "$REPO_SLUG":$CIRCLE_TAG .
 docker push "$REPO_SLUG"
