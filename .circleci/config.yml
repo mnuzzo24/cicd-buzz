@@ -51,7 +51,7 @@ jobs:
 
     deploy-stage:
         docker:
-          - image: ubuntu:14.04
+          - image: circleci/python:3.6.1
         working_directory: /tmp/my-project
         steps:
           - run:
@@ -61,10 +61,10 @@ jobs:
           - run:
               name: Deploy if tests pass and branch is Master (Heroku)
               command: test "$CIRCLE_BRANCH" = "master" && sh .circleci/deploy_heroku.sh
-                            
+
       deploy-prod:
         docker:
-          - image: ubuntu:14.04
+          - image: circleci/python:3.6.1
         working_directory: /tmp/my-project
         steps:
           - run:
