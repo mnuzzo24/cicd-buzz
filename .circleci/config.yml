@@ -44,9 +44,9 @@ jobs:
       # build and push Docker image
       - run: |
           TAG=0.1.$CIRCLE_BUILD_NUM
-          docker build -t mnuzzo24/cicd-buzz:$CIRCLE_TAG .
+          docker build -t cicd-buzz:$CIRCLE_TAG .
           docker login -u $DOCKER_USER -p $DOCKER_PASS
-          docker push mnuzzo24/cicd-buzz:$CIRCLE_TAG
+          docker push cicd-buzz:$CIRCLE_TAG
       - run:
           name: Deploy if tests pass to Heroku
           command: test "$CIRCLE_BRANCH" = "master" && sh .circleci/deploy_heroku.sh
