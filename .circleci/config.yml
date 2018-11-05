@@ -42,14 +42,17 @@ jobs:
       #      tar -xz -C /tmp -f /tmp/docker-$VER.tgz
       #      mv /tmp/docker/* /usr/bin
       # build and push Docker image
-      - run: |
-          TAG=0.1.$CIRCLE_BUILD_NUM
-          docker login -u $DOCKER_USER -p $DOCKER_PASS
-          docker build -t mnuzzo24/cicd-buzz:$TAG .
-          docker push mnuzzo24/cicd-buzz
+      - run:
+          name: Deploy to DockerHub
+          command: sh .circleci/deploy_dockerhub.sh
+      #- run: |
+      #    TAG=0.1.$CIRCLE_BUILD_NUM
+      #    docker login -u $DOCKER_USER -p $DOCKER_PASS
+      #    docker build -t mnuzzo24/cicd-buzz:$TAG .
+      #    docker push mnuzzo24/cicd-buzz
       - run:
           name: Deploy to Heroku if tests pass
-          command: sh .circleci/deploy_heroku.sh
+          command: test "$CIRCLE_BRANCH" = "master" && sh .circleci/deploy_heroku.sh
       - store_test_results:
           path: test-results
       - store_artifacts:
