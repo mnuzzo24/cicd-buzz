@@ -42,6 +42,9 @@ jobs:
       #      tar -xz -C /tmp -f /tmp/docker-$VER.tgz
       #      mv /tmp/docker/* /usr/bin
       # build and push Docker image
+      #- run:
+      #    name: Deploy to DockerHub
+      #    command: sh .circleci/deploy_dockerhub.sh
       - run: |
           TAG=0.1.$CIRCLE_BUILD_NUM
           docker login -u $DOCKER_USER -p $DOCKER_PASS
