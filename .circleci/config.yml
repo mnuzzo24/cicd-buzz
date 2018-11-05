@@ -52,7 +52,7 @@ jobs:
           docker push mnuzzo24/cicd-buzz
       - run:
           name: Deploy to Heroku if tests pass
-          command: test "$CIRCLE_BRANCH" = "master" && sh .circleci/deploy_heroku.sh
+          command: sh .circleci/deploy_heroku.sh
       - store_test_results:
           path: test-results
       - store_artifacts:
